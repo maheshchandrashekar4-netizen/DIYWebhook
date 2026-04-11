@@ -1,7 +1,7 @@
 {
   "workflowApiVersion": "1.1",
   "metaData": {
-    "icon": "https://YOUR_HOST/ui/icon.png",
+    "icon": "https://diywebhook.onrender.com/ui/icon.png",
     "category": "message",
     "isConfigured": true
   },
@@ -23,7 +23,7 @@
         { "activityName": "{{Activity.Name}}" }
       ],
       "outArguments": [],
-      "url": "https://YOUR_HOST/execute",
+      "url": "https://diywebhook.onrender.com/execute",
       "verb": "POST",
       "body": "",
       "header": "",
@@ -34,29 +34,29 @@
   },
   "configurationArguments": {
     "save": {
-      "url": "https://YOUR_HOST/save",
+      "url": "https://diywebhook.onrender.com/save",
       "verb": "POST",
       "useJwt": true
     },
     "publish": {
-      "url": "https://YOUR_HOST/publish",
+      "url": "https://diywebhook.onrender.com/publish",
       "verb": "POST",
       "useJwt": true
     },
     "validate": {
-      "url": "https://YOUR_HOST/validate",
+      "url": "https://diywebhook.onrender.com/validate",
       "verb": "POST",
       "useJwt": true
     },
     "stop": {
-      "url": "https://YOUR_HOST/stop",
+      "url": "https://diywebhook.onrender.com/stop",
       "verb": "POST",
       "useJwt": true
     }
   },
   "userInterfaces": {
     "configModal": {
-      "url": "https://YOUR_HOST/ui/index.html",
+      "url": "https://diywebhook.onrender.com/ui/index.html",
       "height": 500,
       "width": 600
     }
