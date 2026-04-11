@@ -2,10 +2,10 @@
   "name": "sfmc-custom-activity-webhook",
   "version": "1.0.0",
   "description": "SFMC Journey Builder Custom Activity — sends contact data to an external webhook",
-  "main": "server/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server/index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -16,6 +16,6 @@
     "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   }
 }
