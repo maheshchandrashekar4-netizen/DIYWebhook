@@ -14,7 +14,7 @@ app.use('/ui', express.static(path.join(__dirname, 'ui')));
 
 // Serve config.json for SFMC activity registration
 app.get('/config.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'config.json'));
+   res.sendFile(path.join(__dirname, 'config', 'config.json'));
 });
 
 // ── Optional: JWT verification helper ──────────────────────────────────
