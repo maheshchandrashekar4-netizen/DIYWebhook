@@ -279,8 +279,6 @@
 </footer>
 
 <script>
-  // ── Postmonger (SFMC Journey Builder bridge) ──────────────────────────
-  // Inline minimal Postmonger-style bridge (no external dependency needed)
   var connection = (function () {
     var callbacks = {};
     function on(event, cb) { callbacks[event] = cb; }
@@ -299,7 +297,10 @@
 
   var activity = {};
 
-  // ── Lifecycle hooks ───────────────────────────────────────────────────
+  // ── STEP 1: Announce ready FIRST before any listeners ─────────────────
+  connection.post('ready');
+
+  // ── STEP 2: Then set up lifecycle hooks ───────────────────────────────
   connection.on('initActivity', function (payload) {
     if (!payload) return;
     activity = payload;
@@ -309,35 +310,34 @@
       Object.assign(inArgs, o);
     });
 
-    document.getElementById('webhookUrl').value  = inArgs.webhookUrl  || '';
-    document.getElementById('method').value      = inArgs.method      || 'POST';
-    document.getElementById('authHeader').value  = inArgs.authHeader  || '';
-    document.getElementById('authValue').value   = inArgs.authValue   || '';
+    document.getElementById('webhookUrl').value   = inArgs.webhookUrl   || '';
+    document.getElementById('method').value       = inArgs.method       || 'POST';
+    document.getElementById('authHeader').value   = inArgs.authHeader   || '';
+    document.getElementById('authValue').value    = inArgs.authValue    || '';
     document.getElementById('extraPayload').value = inArgs.extraPayload || '';
 
     setStatus('Activity loaded.', '');
-    connection.post('ready');
   });
 
-  connection.on('clickedNext',   handleSave);
-  connection.on('clickedBack',   handleCancel);
+  connection.on('clickedNext', handleSave);
+  connection.on('clickedBack', handleCancel);
 
-  // ── Save ─────────────────────────────────────────────────────────────
+  // ── Save ──────────────────────────────────────────────────────────────
   function handleSave() {
-    var url         = document.getElementById('webhookUrl').value.trim();
-    var method      = document.getElementById('method').value;
-    var authHeader  = document.getElementById('authHeader').value.trim();
-    var authValue   = document.getElementById('authValue').value.trim();
-    var extraRaw    = document.getElementById('extraPayload').value.trim();
+    var url        = document.getElementById('webhookUrl').value.trim();
+    var method     = document.getElementById('method').value;
+    var authHeader = document.getElementById('authHeader').value.trim();
+    var authValue  = document.getElementById('authValue').value.trim();
+    var extraRaw   = document.getElementById('extraPayload').value.trim();
 
     if (!url) { setStatus('⚠ Webhook URL is required.', 'error'); return; }
 
     try { if (extraRaw) JSON.parse(extraRaw); }
     catch (e) { setStatus('⚠ Custom payload is not valid JSON.', 'error'); return; }
 
-    activity.metaData        = activity.metaData || {};
+    activity.metaData = activity.metaData || {};
     activity.metaData.isConfigured = true;
-    activity.arguments       = activity.arguments || {};
+    activity.arguments = activity.arguments || {};
     activity.arguments.execute = activity.arguments.execute || {};
     activity.arguments.execute.inArguments = [
       { contactKey:    '{{Contact.Key}}' },
@@ -365,14 +365,9 @@
 
   function setStatus(msg, type) {
     var el = document.getElementById('statusMsg');
-    el.textContent  = msg;
-    el.className    = type;
+    el.textContent = msg;
+    el.className = type;
   }
-
-  // ── Announce ready immediately (SFMC requires this) ───────────────────
-  connection.post('ready');
-  // Must be the FIRST thing that fires — tells JB the app is loaded
-window.parent.postMessage({ method: 'ready' }, '*');
 </script>
 </body>
 </html>
