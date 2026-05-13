@@ -118,14 +118,10 @@
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://www.exacttarget.com/content/jb-sdk/postmonger.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/postmonger@1.3.1/postmonger.js"></script>
 <script>
   var connection = new Postmonger.Session();
   var activity = {};
-
-  $(window).ready(function () {
-    connection.trigger('ready');
-  });
 
   connection.on('initActivity', function (payload) {
     if (!payload) return;
@@ -144,6 +140,9 @@
 
   connection.on('clickedNext', handleSave);
   connection.on('clickedBack', handleCancel);
+
+  // Fire ready immediately after Postmonger loads
+  connection.trigger('ready');
 
   function handleSave() {
     var url        = document.getElementById('webhookUrl').value.trim();
