@@ -117,60 +117,33 @@
   <button class="btn btn-primary" onclick="handleSave()">Save Activity</button>
 </footer>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://www.exacttarget.com/content/jb-sdk/postmonger.js"></script>
 <script>
+  var connection = new Postmonger.Session();
   var activity = {};
 
-  // ── Send ready immediately as a JSON STRING (required by SFMC) ──────────
-  // Must fire before anything else, no libraries needed
-  window.parent.postMessage('{"method":"ready"}', '*');
-
-  // ── Also send as object for newer JB versions ───────────────────────────
-  window.parent.postMessage({ method: 'ready' }, '*');
-
-  // ── Listen for messages from Journey Builder ────────────────────────────
-  window.addEventListener('message', function(event) {
-    var data = event.data;
-
-    // JB can send data as a string or object — handle both
-    if (typeof data === 'string') {
-      try { data = JSON.parse(data); } catch(e) { return; }
-    }
-
-    if (!data || !data.method) return;
-
-    switch (data.method) {
-      case 'initActivity':
-        onInitActivity(data.data || data);
-        break;
-      case 'clickedNext':
-        handleSave();
-        break;
-      case 'clickedBack':
-        handleCancel();
-        break;
-    }
+  $(window).ready(function () {
+    connection.trigger('ready');
   });
 
-  function onInitActivity(payload) {
+  connection.on('initActivity', function (payload) {
     if (!payload) return;
     activity = payload;
 
     var inArgs = {};
-    var execArgs = (
-      payload.arguments &&
-      payload.arguments.execute &&
-      payload.arguments.execute.inArguments
-    ) || [];
-    execArgs.forEach(function(o) { Object.assign(inArgs, o); });
+    var execArgs = (payload.arguments && payload.arguments.execute && payload.arguments.execute.inArguments) || [];
+    execArgs.forEach(function (o) { Object.assign(inArgs, o); });
 
     document.getElementById('webhookUrl').value   = inArgs.webhookUrl   || '';
     document.getElementById('method').value       = inArgs.method       || 'POST';
     document.getElementById('authHeader').value   = inArgs.authHeader   || '';
     document.getElementById('authValue').value    = inArgs.authValue    || '';
     document.getElementById('extraPayload').value = inArgs.extraPayload || '';
+  });
 
-    setStatus('Activity loaded.', '');
-  }
+  connection.on('clickedNext', handleSave);
+  connection.on('clickedBack', handleCancel);
 
   function handleSave() {
     var url        = document.getElementById('webhookUrl').value.trim();
@@ -202,18 +175,13 @@
     ];
 
     setStatus('✓ Saved!', 'ok');
-
-    // Send updateActivity both as string and object
-    var msg = JSON.stringify({ method: 'updateActivity', data: activity });
-    setTimeout(function() {
-      window.parent.postMessage(msg, '*');
-      window.parent.postMessage({ method: 'updateActivity', data: activity }, '*');
+    setTimeout(function () {
+      connection.trigger('updateActivity', activity);
     }, 400);
   }
 
   function handleCancel() {
-    window.parent.postMessage('{"method":"cancelActivity"}', '*');
-    window.parent.postMessage({ method: 'cancelActivity' }, '*');
+    connection.trigger('cancelActivity');
   }
 
   function setStatus(msg, type) {
