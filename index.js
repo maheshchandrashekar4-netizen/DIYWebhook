@@ -8,8 +8,10 @@ const PORT = process.env.PORT || 3000;
 
 // ── Middleware ──────────────────────────────────────────────────────────
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/config', express.static(path.join(__dirname, 'config')));
+app.use('/ui', express.static(path.join(__dirname, 'ui')));
+app.get('/config.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'config', 'config.json'));
+});
 
 // ── Optional: JWT verification helper ──────────────────────────────────
 // SFMC signs requests with a JWT when useJwt:true in config.json
