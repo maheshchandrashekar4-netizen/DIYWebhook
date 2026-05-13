@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // ── Middleware ──────────────────────────────────────────────────────────
 app.use(express.json());
-app.use('/ui', express.static(path.join(__dirname, 'ui')));
+app.use('/ui', express.static(path.join(__dirname, 'public', 'ui')));
 app.get('/config.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'config', 'config.json'));
 });
